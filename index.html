@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Parlez ! — Your French Speaking Coach</title>
+<style>
+  :root{
+    --bg:#faf6f0; --card:#ffffff; --ink:#2b2723; --ink-soft:#6b625a;
+    --blue:#2f5d8a; --blue-soft:#e8f0f8; --coral:#e2654a; --coral-soft:#fdeee9;
+    --green:#3d8b5f; --green-soft:#e7f4ec; --gold:#c98a2d; --gold-soft:#fbf1e0;
+    --line:#ece4da; --shadow:0 2px 10px rgba(60,45,30,.08);
+    --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html{font-size:17px;}
+  body{
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5;
+    min-height:100vh; padding-bottom:84px;
+  }
+  #app{max-width:520px; margin:0 auto; padding:16px 16px 24px;}
+  button{font-family:inherit; font-size:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  button:focus-visible, a:focus-visible{outline:3px solid var(--blue); outline-offset:2px; border-radius:8px;}
+
+  /* ---------- header ---------- */
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px;}
+  .brand{font-size:1.25rem; font-weight:800; letter-spacing:-.01em;}
+  .brand span{color:var(--coral);}
+  .icon-btn{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:9px 13px; font-size:.9rem; font-weight:600; box-shadow:var(--shadow); color:var(--ink-soft);
+  }
+
+  /* ---------- cards ---------- */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow); margin-bottom:14px;}
+  .muted{color:var(--ink-soft);}
+  .small{font-size:.86rem;}
+  h1{font-size:1.45rem; line-height:1.25; letter-spacing:-.01em;}
+  h2{font-size:1.15rem; margin-bottom:6px;}
+
+  /* ---------- progress ---------- */
+  .progress-wrap{margin:10px 0 4px;}
+  .bar{height:12px; background:var(--line); border-radius:99px; overflow:hidden;}
+  .bar > div{height:100%; background:linear-gradient(90deg,var(--green),#5fb585); border-radius:99px; transition:width .5s ease; min-width:0;}
+  .stats-row{display:flex; gap:10px; margin-top:12px;}
+  .stat{flex:1; text-align:center; background:var(--bg); border-radius:12px; padding:10px 6px;}
+  .stat b{display:block; font-size:1.3rem;}
+  .stat span{font-size:.78rem; color:var(--ink-soft);}
+
+  /* ---------- unit list ---------- */
+  .unit-card{display:flex; align-items:center; gap:14px; width:100%; text-align:left;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; box-shadow:var(--shadow); margin-bottom:12px; transition:transform .1s ease;}
+  .unit-card:active{transform:scale(.98);}
+  .unit-emoji{font-size:1.9rem; width:56px; height:56px; display:flex; align-items:center; justify-content:center;
+    background:var(--blue-soft); border-radius:14px; flex-shrink:0;}
+  .unit-card.done .unit-emoji{background:var(--green-soft);}
+  .unit-info{flex:1; min-width:0;}
+  .unit-info b{display:block; font-size:1.02rem;}
+  .unit-info .small{margin-top:2px;}
+  .badge{display:inline-block; font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:99px; vertical-align:middle;}
+  .badge.start{background:var(--coral-soft); color:var(--coral);}
+  .badge.done{background:var(--green-soft); color:var(--green);}
+  .badge.formal{background:var(--blue-soft); color:var(--blue);}
+  .badge.informal{background:var(--gold-soft); color:var(--gold);}
+  .chev{color:var(--line); font-size:1.4rem;}
+
+  /* ---------- buttons ---------- */
+  .btn{display:block; width:100%; text-align:center; font-weight:700; font-size:1.05rem;
+    padding:16px; border-radius:14px; margin-top:14px; transition:transform .1s ease;}
+  .btn:active{transform:scale(.98);}
+  .btn.primary{background:var(--blue); color:#fff; box-shadow:0 3px 10px rgba(47,93,138,.3);}
+  .btn.coral{background:var(--coral); color:#fff; box-shadow:0 3px 10px rgba(226,101,74,.3);}
+  .btn.ghost{background:var(--card); border:1px solid var(--line); color:var(--ink-soft);}
+  .btn.green{background:var(--green); color:#fff;}
+  .btn:disabled{opacity:.5;}
+
+  /* ---------- phrase cards ---------- */
+  .phrase-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; box-shadow:var(--shadow); margin-bottom:12px;}
+  .phrase-fr{font-size:1.35rem; font-weight:800; letter-spacing:-.01em; margin:4px 0 2px;}
+  .phrase-say{font-size:1.02rem; color:var(--coral); font-weight:600; margin-bottom:2px;}
+  .phrase-en{color:var(--ink-soft);}
+  .phrase-tip{font-size:.87rem; color:var(--ink-soft); background:var(--bg); border-radius:10px; padding:9px 12px; margin-top:10px;}
+  .audio-row{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .audio-btn{display:flex; align-items:center; gap:6px; font-weight:700; font-size:.92rem;
+    padding:11px 15px; border-radius:12px; background:var(--blue-soft); color:var(--blue);}
+  .audio-btn.slow{background:var(--gold-soft); color:var(--gold);}
+  .audio-btn.mic{background:var(--coral-soft); color:var(--coral);}
+  .audio-btn:active{transform:scale(.96);}
+  .audio-btn.playing{background:var(--blue); color:#fff;}
+  .mic-feedback{margin-top:10px; font-size:.92rem; background:var(--green-soft); border-radius:10px; padding:10px 12px; display:none;}
+
+  /* ---------- step header ---------- */
+  .step-head{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .back-btn{font-size:1.5rem; line-height:1; padding:6px 12px 8px; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);}
+  .step-dots{display:flex; gap:6px; margin:0 0 16px;}
+  .step-dots div{flex:1; height:6px; border-radius:99px; background:var(--line);}
+  .step-dots div.on{background:var(--coral);}
+
+  /* ---------- roleplay chat ---------- */
+  .scene{background:var(--gold-soft); border-radius:12px; padding:12px 14px; font-size:.93rem; margin-bottom:14px;}
+  .chat{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  .bubble{max-width:88%; padding:12px 14px; border-radius:16px; box-shadow:var(--shadow); animation:pop .25s ease;}
+  .bubble.them{align-self:flex-start; background:var(--card); border:1px solid var(--line); border-bottom-left-radius:4px;}
+  .bubble.you{align-self:flex-end; background:var(--blue); color:#fff; border-bottom-right-radius:4px;}
+  .bubble .b-fr{font-weight:700; font-size:1.05rem;}
+  .bubble .b-say{font-size:.85rem; color:var(--coral); font-weight:600;}
+  .bubble.you .b-say{color:#ffd9cf;}
+  .bubble .b-en{font-size:.85rem; opacity:.75; margin-top:2px;}
+  .bubble .mini-audio{margin-top:6px; font-size:.8rem; font-weight:700; color:var(--blue);
+    background:var(--blue-soft); padding:5px 10px; border-radius:8px;}
+  @keyframes pop{from{transform:translateY(8px); opacity:0;} to{transform:none; opacity:1;}}
+  .prompt-label{font-weight:700; font-size:.95rem; margin-bottom:10px;}
+  .choice{display:block; width:100%; text-align:left; background:var(--card); border:2px solid var(--line);
+    border-radius:14px; padding:13px 15px; margin-bottom:10px; transition:border-color .15s;}
+  .choice:active{transform:scale(.98);}
+  .choice .c-fr{font-weight:700;}
+  .choice .c-en{font-size:.84rem; color:var(--ink-soft);}
+  .choice.nope{border-color:var(--gold); background:var(--gold-soft); animation:wiggle .3s ease;}
+  @keyframes wiggle{0%,100%{transform:none;} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);}}
+  .gentle-note{background:var(--gold-soft); border-radius:12px; padding:11px 14px; font-size:.92rem; margin-bottom:10px; animation:pop .25s ease;}
+
+  /* ---------- practice ---------- */
+  .q-count{font-size:.85rem; color:var(--ink-soft); font-weight:700; margin-bottom:8px;}
+  .q-text{font-size:1.12rem; font-weight:700; margin-bottom:14px;}
+  .feedback{border-radius:14px; padding:14px; margin-top:6px; animation:pop .25s ease;}
+  .feedback.yes{background:var(--green-soft);}
+  .feedback.almost{background:var(--gold-soft);}
+  .feedback b{display:block; margin-bottom:4px;}
+  .choice.correct{border-color:var(--green); background:var(--green-soft);}
+
+  /* ---------- review ---------- */
+  .flash{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 18px; box-shadow:var(--shadow); text-align:center; margin-bottom:14px;}
+  .flash .f-en{font-size:1.3rem; font-weight:800;}
+  .flash .f-hint{font-size:.9rem; color:var(--ink-soft); margin-top:6px;}
+  .flash .f-fr{font-size:1.4rem; font-weight:800; color:var(--blue); margin-top:14px;}
+  .flash .f-say{color:var(--coral); font-weight:600;}
+  .grade-row{display:flex; gap:8px;}
+  .grade-row .btn{margin-top:0; padding:14px 6px; font-size:.95rem;}
+
+  /* ---------- phrasebook ---------- */
+  .search{width:100%; font-family:inherit; font-size:1rem; padding:14px 16px; border-radius:14px;
+    border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow); margin-bottom:14px; color:var(--ink);}
+  .search:focus{outline:3px solid var(--blue-soft); border-color:var(--blue);}
+  .book-unit{font-size:.85rem; font-weight:800; color:var(--ink-soft); text-transform:uppercase;
+    letter-spacing:.05em; margin:18px 0 8px;}
+  .book-row{display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; padding:11px 13px; margin-bottom:8px;}
+  .book-row .b-main{flex:1; min-width:0;}
+  .book-row .b-main b{display:block;}
+  .book-row .b-main .say{color:var(--coral); font-size:.85rem; font-weight:600;}
+  .book-row .b-main .en{color:var(--ink-soft); font-size:.85rem;}
+  .book-play{font-size:1.1rem; background:var(--blue-soft); color:var(--blue); border-radius:10px;
+    padding:9px 12px; flex-shrink:0;}
+  .learned-dot{width:9px; height:9px; border-radius:99px; background:var(--green); flex-shrink:0;}
+  .learned-dot.no{background:var(--line);}
+
+  /* ---------- bottom nav ---------- */
+  nav{position:fixed; bottom:0; left:0; right:0; background:var(--card); border-top:1px solid var(--line);
+    display:flex; justify-content:space-around; padding:8px 6px calc(8px + env(safe-area-inset-bottom)); z-index:50;}
+  nav button{display:flex; flex-direction:column; align-items:center; gap:2px; font-size:.72rem;
+    font-weight:700; color:var(--ink-soft); padding:6px 18px; border-radius:12px;}
+  nav button .n-ico{font-size:1.35rem;}
+  nav button.active{color:var(--coral); background:var(--coral-soft);}
+  .nav-pill{position:absolute; top:2px; right:10px; background:var(--coral); color:#fff; font-size:.65rem;
+    font-weight:800; border-radius:99px; padding:1px 6px;}
+
+  /* ---------- modal ---------- */
+  .modal-back{position:fixed; inset:0; background:rgba(40,30,20,.45); z-index:100;
+    display:flex; align-items:flex-end; justify-content:center;}
+  .modal{background:var(--card); border-radius:22px 22px 0 0; max-width:520px; width:100%;
+    max-height:86vh; overflow-y:auto; padding:22px 20px calc(28px + env(safe-area-inset-bottom)); animation:slideup .25s ease;}
+  @keyframes slideup{from{transform:translateY(40px); opacity:0;} to{transform:none; opacity:1;}}
+  .sound-row{display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); align-items:baseline;}
+  .sound-row:last-child{border-bottom:none;}
+  .sound-key{font-weight:800; color:var(--coral); min-width:64px; flex-shrink:0;}
+  .sound-row .small{flex:1;}
+
+  /* ---------- misc ---------- */
+  .celebrate{text-align:center; padding:30px 16px;}
+  .celebrate .big{font-size:3.4rem; animation:bounce .6s ease;}
+  @keyframes bounce{0%{transform:scale(.4);} 60%{transform:scale(1.15);} 100%{transform:scale(1);}}
+  .notice{background:var(--gold-soft); border-radius:12px; padding:11px 14px; font-size:.88rem; margin-bottom:14px;}
+  .culture{background:var(--gold-soft); border-radius:var(--radius); padding:16px; margin-bottom:14px;}
+  .culture h3{font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--gold); margin-bottom:6px;}
+  .tu-vous{display:flex; gap:10px; margin-top:10px;}
+  .tu-vous > div{flex:1; border-radius:12px; padding:12px; font-size:.88rem;}
+  .tu-vous .v{background:var(--blue-soft);}
+  .tu-vous .t{background:var(--gold-soft);}
+  .tu-vous b{display:block; font-size:1rem;}
+  @media (min-width:600px){ html{font-size:18px;} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="nav"></nav>
+
+<script>
+"use strict";
+
+/* =========================================================
+   CONTENT — all learning material lives here, in the app.
+   Respelling system (consistent everywhere):
+   CAPITALS = the syllable to say a little stronger (French
+   gently stresses the END of words). "(n)" = nasal vowel:
+   say the vowel through your nose, do NOT fully say the n.
+   ========================================================= */
+
+const SOUND_GUIDE = [
+  ["boh(n)", "A nasal sound. Say “boh” through your nose. Do not fully say the n. Try: bonjour = boh(n)-ZHOOR."],
+  ["ah(n)", "Another nasal sound, like “ah” through the nose. Try: France = FRAH(N)SS."],
+  ["a(n)", "Nasal “a”, a bit like the “an” in “sang” without the g. Try: vin (wine) = VA(N)."],
+  ["ew", "The French “u”. Say “ee”, then round your lips like you are going to whistle. Try: tu = TEW."],
+  ["oo", "Like “food”. This is the French “ou”. Try: vous = VOO. “ew” and “oo” are different words in French!"],
+  ["zh", "Like the “s” in “measure” or “television”. Try: bonjour = boh(n)-ZHOOR."],
+  ["r", "The French R is a soft gargle at the back of your throat. A normal English “r” is fine at first — people will understand you."],
+  ["ay / eh", "“ay” like “say” (café = kah-FAY). “eh” like “bed”."],
+  ["uh", "A relaxed sound like the “a” in “about”. Try: le = LUH."],
+  ["Silent letters", "French often does not say the last letter. “Vous” sounds like VOO. “Paris” sounds like pah-REE. Trust the respelling, not the spelling."],
+  ["Liaison", "Sometimes a silent letter wakes up before a vowel: “vous avez” = voo-zah-VAY. Our respellings already include this — just read them."],
+  ["CAPITALS", "The syllable to say slightly stronger. French words end with a gentle push: bonjour = boh(n)-ZHOOR."]
+];
+
+const UNITS = [
+{
+  id:"greetings", emoji:"👋", title:"Greetings & being polite",
+  goal:"Say hello, thank you, and goodbye — the polite way.",
+  intro:"These few words do half the work of speaking French. In France, you greet people before anything else — in shops, on buses, everywhere. Learn these and doors open. Say each one out loud. Yes, really out loud!",
+  phrases:[
+    {fr:"Bonjour", say:"boh(n)-ZHOOR", en:"Hello / Good day", reg:"both", tip:"The most important word in French. Say it to everyone, before anything else. Use it all day until the evening."},
+    {fr:"Bonsoir", say:"boh(n)-SWAHR", en:"Good evening", reg:"both", tip:"From about 6 in the evening, swap Bonjour for Bonsoir."},
+    {fr:"Salut", say:"sah-LEW", en:"Hi / Bye (casual)", reg:"informal", tip:"Only for friends, family, and people your age. It means both “hi” and “bye”."},
+    {fr:"Merci", say:"mehr-SEE", en:"Thank you", reg:"both", tip:"Use it often. The French notice when you don’t."},
+    {fr:"Merci beaucoup", say:"mehr-SEE boh-KOO", en:"Thank you very much", reg:"both", tip:"“Beaucoup” means “a lot”. A warm, bigger thank-you."},
+    {fr:"S’il vous plaît", say:"seel voo PLEH", en:"Please (polite)", reg:"formal", tip:"Use with strangers, staff, and anyone older. Add it to any request to sound polite."},
+    {fr:"S’il te plaît", say:"seel tuh PLEH", en:"Please (to a friend)", reg:"informal", tip:"The casual “please”, for friends and children."},
+    {fr:"Excusez-moi", say:"ehk-skew-zay-MWAH", en:"Excuse me", reg:"formal", tip:"To get someone’s attention, or to pass by. Your key for asking questions later."},
+    {fr:"Pardon", say:"pahr-DOH(N)", en:"Sorry / Pardon", reg:"both", tip:"Bumped into someone? “Pardon !” fixes it."},
+    {fr:"Au revoir", say:"oh ruh-VWAHR", en:"Goodbye", reg:"both", tip:"The standard goodbye. Works everywhere, with everyone."},
+    {fr:"De rien", say:"duh RYA(N)", en:"You’re welcome", reg:"both", tip:"The easy answer when someone says “merci”. Literally: “it’s nothing”."},
+    {fr:"Bonne journée", say:"bun zhoor-NAY", en:"Have a nice day", reg:"both", tip:"Say it when leaving a shop or ending a chat. People will smile."}
+  ],
+  culture:"In France, always say “Bonjour” BEFORE asking for anything — in a shop, at a ticket window, to a bus driver. Walking up and asking directly feels rude to French people, even if you say please. One “Bonjour” opens every door.",
+  roleplay:{
+    title:"Role-play: the bakery",
+    scene:"You walk into a small bakery in Paris. It smells amazing. The baker looks up at you. You’ve got this — you only need words from this unit (plus one croissant 🥐).",
+    steps:[
+      {other:{fr:"Bonjour !", say:"boh(n)-ZHOOR", en:"Hello!"},
+       prompt:"Greet the baker back.",
+       choices:[
+        {fr:"Bonjour !", en:"Hello!", good:true},
+        {fr:"Salut !", en:"Hi! (casual)", note:"“Salut” is for friends. With a shopkeeper, “Bonjour” is the safe, polite choice. Try again!"},
+        {fr:"Au revoir !", en:"Goodbye!", note:"That means “goodbye” — a little early for that! 🙂 Try again."}
+       ]},
+      {other:{fr:"Vous désirez ?", say:"voo day-zee-RAY", en:"What would you like?"},
+       prompt:"Point at a croissant and ask politely.",
+       choices:[
+        {fr:"Un croissant, s’il vous plaît.", en:"A croissant, please.", good:true},
+        {fr:"Un croissant, s’il te plaît.", en:"A croissant, please (casual).", note:"So close! “S’il TE plaît” is for friends. With the baker, use “s’il VOUS plaît”."},
+        {fr:"Pardon !", en:"Sorry!", note:"“Pardon” is for saying sorry. Here you want to ask for the croissant — with “s’il vous plaît”."}
+       ]},
+      {other:{fr:"Voilà !", say:"vwah-LAH", en:"Here you go!"},
+       prompt:"The baker hands it over. Say a warm thank you.",
+       choices:[
+        {fr:"Merci beaucoup !", en:"Thank you very much!", good:true},
+        {fr:"De rien !", en:"You’re welcome!", note:"“De rien” is the ANSWER to “merci”. You’re the one saying thanks here! Try again."},
+        {fr:"Bonsoir !", en:"Good evening!", note:"It’s morning at the bakery — and first, say thank you! Try “Merci beaucoup”."}
+       ]},
+      {other:{fr:"Bonne journée !", say:"bun zhoor-NAY", en:"Have a nice day!"},
+       prompt:"Say goodbye nicely as you leave.",
+       choices:[
+        {fr:"Merci, au revoir !", en:"Thanks, goodbye!", good:true},
+        {fr:"Bonjour !", en:"Hello!", note:"“Bonjour” is for arriving. When leaving, say “Au revoir”. Try again!"},
+        {fr:"S’il vous plaît !", en:"Please!", note:"“S’il vous plaît” is for asking. Here you just want a friendly goodbye."}
+       ]}
+    ],
+    end:"🥐 You just did a whole exchange in French — greeting, asking, thanking, goodbye. That is a REAL conversation. Well done!"
+  },
+  practice:[
+    {q:"How do you say “Thank you very much”?", opts:["Merci beaucoup","S’il vous plaît","De rien"], a:0, why:"“Merci” = thank you, “beaucoup” = a lot. “S’il vous plaît” is please, “de rien” is you’re welcome."},
+    {q:"It is 8 in the evening. You meet your hotel receptionist. Say hello:", opts:["Bonsoir","Salut","Bonne journée"], a:0, why:"Evening → “Bonsoir”. “Salut” is too casual for staff, and “Bonne journée” is for leaving."},
+    {listen:"De rien", q:"Tap play. What did you hear?", opts:["You’re welcome","Please","Goodbye"], a:0, why:"“De rien” (duh RYA(N)) = you’re welcome — the reply to “merci”."},
+    {q:"You bump into someone in the street. Say:", opts:["Pardon !","Bonjour !","De rien !"], a:0, why:"“Pardon” = sorry. Quick, polite, done."},
+    {q:"Bonne ___ ! (Have a nice day!)", opts:["journée","bonjour","merci"], a:0, why:"“Bonne journée” — say it when you leave a shop. It always gets a smile."}
+  ]
+},
+{
+  id:"intro", emoji:"🙋", title:"Introducing yourself",
+  goal:"Say your name, where you’re from, and ask about the other person.",
+  intro:"Time to talk about YOU. After this unit you can meet someone, give your name, say where you’re from, and ask them back. This is where French stops being words and starts being conversation.",
+  phrases:[
+    {fr:"Je m’appelle…", say:"zhuh mah-PEHL…", en:"My name is…", reg:"both", tip:"Literally “I call myself…”. Just add your name: “Je m’appelle Sam.”"},
+    {fr:"Comment vous appelez-vous ?", say:"koh-MAH(N) voo zah-play-VOO", en:"What is your name? (polite)", reg:"formal", tip:"Use with people you don’t know. Hear the “z” gluing the words? That’s liaison."},
+    {fr:"Comment tu t’appelles ?", say:"koh-MAH(N) tew tah-PEHL", en:"What’s your name? (casual)", reg:"informal", tip:"For children, friends, and casual settings."},
+    {fr:"Enchanté", say:"ah(n)-shah(n)-TAY", en:"Nice to meet you", reg:"both", tip:"Literally “delighted”! Women write it “Enchantée” — it sounds exactly the same."},
+    {fr:"Je viens de…", say:"zhuh vya(n) duh…", en:"I come from…", reg:"both", tip:"Add your city or country: “Je viens de Londres.” (I come from London.)"},
+    {fr:"Je suis…", say:"zhuh SWEE…", en:"I am…", reg:"both", tip:"Useful everywhere: “Je suis Sam.” “Je suis canadien.” (I am Canadian.)"},
+    {fr:"J’habite à…", say:"zhah-BEET ah…", en:"I live in…", reg:"both", tip:"Add a city: “J’habite à Tokyo.” The H is silent."},
+    {fr:"Et vous ?", say:"ay VOO", en:"And you? (polite)", reg:"formal", tip:"Magic phrase: turn any question back. “Je viens de Rome. Et vous ?”"},
+    {fr:"Et toi ?", say:"ay TWAH", en:"And you? (casual)", reg:"informal", tip:"Same trick, for friends."},
+    {fr:"Voici…", say:"vwah-SEE…", en:"This is… (introducing someone)", reg:"both", tip:"“Voici Marie.” = This is Marie. Simple way to introduce a friend."}
+  ],
+  culture:"TU or VOUS? French has two words for “you”. VOUS = polite: strangers, older people, staff, work. TU = close: friends, family, children. When in doubt, use VOUS — nobody is ever offended by vous. If someone says “on peut se tutoyer !” they’re inviting you to switch to tu. That’s a small honor — say yes!",
+  tuvous:true,
+  roleplay:{
+    title:"Role-play: meeting a neighbor",
+    scene:"You just moved in. In the hallway, a friendly woman smiles at you. Time for your first French introduction. (Use your own name — anywhere we write “Sam”, say yours!)",
+    steps:[
+      {other:{fr:"Bonjour ! Je m’appelle Claire.", say:"boh(n)-ZHOOR ! zhuh mah-PEHL KLAIR", en:"Hello! My name is Claire."},
+       prompt:"Say hello and give your name.",
+       choices:[
+        {fr:"Bonjour ! Je m’appelle Sam.", en:"Hello! My name is Sam.", good:true},
+        {fr:"Bonjour ! Comment vous appelez-vous ?", en:"Hello! What is your name?", note:"She just told you her name — Claire! 🙂 Tell her yours: “Je m’appelle…”"},
+        {fr:"Voici Sam.", en:"This is Sam.", note:"“Voici” introduces SOMEONE ELSE. For yourself, say “Je m’appelle Sam.”"}
+       ]},
+      {other:{fr:"Enchantée ! Vous venez d’où ?", say:"ah(n)-shah(n)-TAY ! voo vuh-nay DOO", en:"Nice to meet you! Where do you come from?"},
+       prompt:"Tell her where you’re from.",
+       choices:[
+        {fr:"Je viens de Londres.", en:"I come from London. (swap in your city!)", good:true},
+        {fr:"Je m’appelle Londres.", en:"My name is London.", note:"That says your NAME is London! 🙂 “Where from” needs “Je viens de…”"},
+        {fr:"Et vous ?", en:"And you?", note:"Good instinct — but answer her first! “Je viens de…”, then you can ask back."}
+       ]},
+      {other:{fr:"Ah, super ! Moi, j’habite ici depuis dix ans.", say:"ah, sew-PEHR", en:"Oh, great! I’ve lived here for ten years."},
+       prompt:"Be friendly — ask about her, too.",
+       choices:[
+        {fr:"Et vous, vous venez d’où ?", en:"And you, where are you from?", good:true},
+        {fr:"Et toi, tu viens d’où ?", en:"And you (casual), where are you from?", note:"Almost perfect! You just met, so stay with “vous” for now. She may offer “tu” later."},
+        {fr:"Je ne sais pas.", en:"I don’t know.", note:"That means “I don’t know” — a bit mysterious here! 🙂 Ask her back with “Et vous… ?”"}
+       ]},
+      {other:{fr:"De Lyon ! Bon, à bientôt, j’espère !", say:"duh LYOH(N) ! boh(n), ah byan-TOH", en:"From Lyon! Well — see you soon, I hope!"},
+       prompt:"Wrap up warmly.",
+       choices:[
+        {fr:"Enchanté ! Au revoir !", en:"Nice to meet you! Goodbye!", good:true},
+        {fr:"Pardon !", en:"Sorry!", note:"Nothing to apologize for — this went great! End with “Enchanté ! Au revoir !”"},
+        {fr:"Je viens de Londres.", en:"I come from London.", note:"You already told her that one 🙂 Time for a friendly goodbye: “Enchanté ! Au revoir !”"}
+       ]}
+    ],
+    end:"🎉 You introduced yourself in French. Name, hometown, questions back — that’s a real first meeting. Claire likes you already."
+  },
+  practice:[
+    {q:"How do you say “My name is Anna”?", opts:["Je m’appelle Anna","Je viens de Anna","Voici Anna"], a:0, why:"“Je m’appelle…” = my name is. “Je viens de…” = I come from. “Voici…” introduces someone else."},
+    {q:"You meet your friend’s little daughter. Ask her name:", opts:["Comment tu t’appelles ?","Comment vous appelez-vous ?","Vous venez d’où ?"], a:0, why:"With children, “tu” is right. “Vous” would sound funny to a child."},
+    {q:"Someone says “Je m’appelle Paul.” The friendly reply:", opts:["Enchanté !","De rien !","Pardon !"], a:0, why:"“Enchanté” = nice to meet you. Say it whenever you learn someone’s name."},
+    {listen:"Je viens de Paris", q:"Tap play. What is this person saying?", opts:["I come from Paris","I live in Paris","My name is Paris"], a:0, why:"“Je viens de…” = I come from. (“J’habite à…” = I live in.)"},
+    {q:"You answered a question. Now ask the (polite) stranger the same thing back:", opts:["Et vous ?","Et toi ?","Voici ?"], a:0, why:"“Et vous ?” politely turns any question around. “Et toi ?” is the casual version — remember: strangers get vous."}
+  ]
+},
+{
+  id:"smalltalk", emoji:"💬", title:"Small talk",
+  goal:"Ask “how are you?”, answer it, and part warmly.",
+  intro:"“How are you?” starts almost every French chat. After this unit you can ask it two ways, answer honestly, and say “see you soon” like a local. Short and friendly — French small talk is quick!",
+  phrases:[
+    {fr:"Comment allez-vous ?", say:"koh-mah(n) tah-lay-VOO", en:"How are you? (polite)", reg:"formal", tip:"The polite version. Hear the “t” gluing the words together? Smooth!"},
+    {fr:"Ça va ?", say:"sah VAH", en:"How’s it going? (casual)", reg:"informal", tip:"The phrase you’ll hear most in France. Bonus: it’s also the answer! “Ça va ?” “Ça va !”"},
+    {fr:"Ça va bien, merci", say:"sah vah BYA(N), mehr-SEE", en:"I’m fine, thanks", reg:"both", tip:"Your all-purpose answer. Short and cheerful."},
+    {fr:"Très bien !", say:"treh BYA(N)", en:"Very well!", reg:"both", tip:"Feeling great? “Très bien !” The S in “très” is silent."},
+    {fr:"Pas mal", say:"pah MAHL", en:"Not bad", reg:"both", tip:"Honest and relaxed. Very French."},
+    {fr:"Comme ci, comme ça", say:"kum SEE kum SAH", en:"So-so", reg:"both", tip:"For average days. Tilt your hand side to side while saying it — the full French experience."},
+    {fr:"Oui", say:"WEE", en:"Yes", reg:"both", tip:"Tiny word, endless uses."},
+    {fr:"Non", say:"NOH(N)", en:"No", reg:"both", tip:"Nasal! Say it through your nose: NOH(N). Add “merci” to refuse politely: “Non, merci.”"},
+    {fr:"À bientôt !", say:"ah byan-TOH", en:"See you soon!", reg:"both", tip:"A warm way to part when you’ll meet again."},
+    {fr:"À demain !", say:"ah duh-MA(N)", en:"See you tomorrow!", reg:"both", tip:"For colleagues, classmates, your hotel receptionist…"},
+    {fr:"Bonne soirée !", say:"bun swah-RAY", en:"Have a nice evening!", reg:"both", tip:"The evening twin of “bonne journée”. Say it when leaving, from late afternoon on."}
+  ],
+  culture:"French “how are you?” expects a SHORT answer — “Ça va, et toi ?” and move on. Nobody expects a health report. And here’s the local trick: you can answer “Ça va ?” with… “Ça va !” Same words, question becomes answer. Two words, full conversation.",
+  roleplay:{
+    title:"Role-play: morning with Claire",
+    scene:"Next morning, you meet your neighbor Claire by the mailboxes. She waves. You already know how to greet — now add small talk.",
+    steps:[
+      {other:{fr:"Bonjour ! Ça va ?", say:"boh(n)-ZHOOR ! sah VAH", en:"Hello! How’s it going?"},
+       prompt:"Answer — and ask her back.",
+       choices:[
+        {fr:"Ça va bien, merci. Et vous ?", en:"Fine, thanks. And you?", good:true},
+        {fr:"Comment allez-vous ?", en:"How are you? (polite)", note:"That asks the question but skips her answer! First reply — “Ça va bien, merci” — then ask back."},
+        {fr:"Non.", en:"No.", note:"Ouch, a little cold! 🙂 Try the friendly classic: “Ça va bien, merci. Et vous ?”"}
+       ]},
+      {other:{fr:"Très bien ! Il fait beau aujourd’hui, non ?", say:"treh BYA(N) ! eel feh BOH oh-zhoor-DWEE, noh(n)", en:"Very well! Nice weather today, right?"},
+       prompt:"Agree with her — keep it easy.",
+       choices:[
+        {fr:"Oui, très bien !", en:"Yes, very nice!", good:true},
+        {fr:"Comme ci, comme ça.", en:"So-so.", note:"That’s an answer about how YOU are doing. She’s talking about the weather — just agree: “Oui !”"},
+        {fr:"Pardon !", en:"Sorry!", note:"No need to apologize for the weather 🙂 A simple “Oui, très bien !” keeps the chat rolling."}
+       ]},
+      {other:{fr:"Bon, je dois y aller. À bientôt !", say:"boh(n), zhuh dwah zee ah-LAY. ah byan-TOH", en:"Well, I have to go. See you soon!"},
+       prompt:"Part warmly.",
+       choices:[
+        {fr:"À bientôt ! Bonne journée !", en:"See you soon! Have a nice day!", good:true},
+        {fr:"Bonsoir !", en:"Good evening!", note:"It’s morning! “Bonsoir” starts around 6 pm. Try “À bientôt ! Bonne journée !”"},
+        {fr:"Ça va ?", en:"How’s it going?", note:"You already covered that one 🙂 She’s leaving — send her off with “Bonne journée !”"}
+       ]}
+    ],
+    end:"☀️ Greeting, small talk, warm goodbye — you just chatted like a neighbor, not a tourist. It’s working!"
+  },
+  practice:[
+    {q:"Your friend asks “Ça va ?”. The easiest honest answer:", opts:["Ça va bien, merci","Comment allez-vous ?","À demain"], a:0, why:"Answer first, short and friendly. “Ça va bien, merci” works every single time."},
+    {q:"How do you ask “how are you” POLITELY, to a stranger?", opts:["Comment allez-vous ?","Ça va ?","Et toi ?"], a:0, why:"“Comment allez-vous ?” is the polite version. “Ça va ?” is casual — for friends."},
+    {listen:"Comme ci, comme ça", q:"Tap play. How is this person feeling?", opts:["So-so","Great","Terrible"], a:0, why:"“Comme ci, comme ça” = so-so. Not great, not bad. (Hand tilt optional.)"},
+    {q:"A colleague leaves work. You’ll see them tomorrow. Say:", opts:["À demain !","À bientôt !","Bonjour !"], a:0, why:"“À demain” = see you TOMORROW — exactly right here. “À bientôt” = see you soon (some day)."},
+    {q:"Someone offers food you don’t want. Refuse politely:", opts:["Non, merci","Non !","Pas mal"], a:0, why:"“Non, merci” = no thank you. The “merci” keeps it warm. Remember it — it’s endlessly useful."}
+  ]
+},
+{
+  id:"numbers", emoji:"🔢", title:"Numbers & simple questions",
+  goal:"Count to 10 and ask the questions that unlock everything.",
+  intro:"Numbers buy croissants, pay bills, and catch trains. Add three little question phrases and you can ask about anything, anywhere — even when you don’t know the word for it. Count out loud on your fingers as you go!",
+  phrases:[
+    {fr:"un", say:"UH(N)", en:"one", reg:"both", tip:"Nasal — through the nose."},
+    {fr:"deux", say:"DUH", en:"two", reg:"both", tip:"Like “duh” with rounded lips. The X is silent."},
+    {fr:"trois", say:"TRWAH", en:"three", reg:"both", tip:"The S is silent."},
+    {fr:"quatre", say:"KAT-ruh", en:"four", reg:"both", tip:"A quick “KAT” with a soft “ruh”."},
+    {fr:"cinq", say:"SANK", en:"five", reg:"both", tip:"Sounds like “sank”."},
+    {fr:"six", say:"SEESS", en:"six", reg:"both", tip:"Like “cease”."},
+    {fr:"sept", say:"SET", en:"seven", reg:"both", tip:"The P is silent — just “set”."},
+    {fr:"huit", say:"WEET", en:"eight", reg:"both", tip:"Like “wheat”."},
+    {fr:"neuf", say:"NUHF", en:"nine", reg:"both", tip:"Also the word for “new”!"},
+    {fr:"dix", say:"DEESS", en:"ten", reg:"both", tip:"Like “dease”. You can count to ten in French now!"},
+    {fr:"C’est combien ?", say:"say koh(n)-BYA(N)", en:"How much is it?", reg:"both", tip:"THE shopping question. Point at anything and ask."},
+    {fr:"Où est… ?", say:"oo EH…", en:"Where is…?", reg:"both", tip:"“Où est la gare ?” = where is the station? You’ll use this constantly."},
+    {fr:"Qu’est-ce que c’est ?", say:"kess kuh SEH", en:"What is that?", reg:"both", tip:"Looks scary written down — but it’s just “kess kuh SEH”. Point and ask!"},
+    {fr:"Vous avez… ?", say:"voo zah-VAY…", en:"Do you have…?", reg:"formal", tip:"“Vous avez un plan ?” = do you have a map? Ask for anything."}
+  ],
+  culture:"Counting on your fingers? The French start with the THUMB: thumb = 1, thumb + index = 2. If you hold up just your index finger for “one”, some sellers may read it as “two”. When in doubt, say the number — now you can!",
+  roleplay:{
+    title:"Role-play: the market",
+    scene:"A street market, stalls piled with fruit. You want three apples (“pommes”, POM). You know your numbers. Go get them.",
+    steps:[
+      {other:{fr:"Bonjour ! Vous désirez ?", say:"boh(n)-ZHOOR ! voo day-zee-RAY", en:"Hello! What would you like?"},
+       prompt:"Greet him — then ask for three apples.",
+       choices:[
+        {fr:"Bonjour ! Trois pommes, s’il vous plaît.", en:"Hello! Three apples, please.", good:true},
+        {fr:"Bonjour ! Dix pommes, s’il vous plaît.", en:"Hello! TEN apples, please.", note:"“Dix” = ten — that’s a lot of apples! 🍎 You want THREE: “trois”."},
+        {fr:"Trois pommes.", en:"Three apples. (no greeting)", note:"Remember the golden rule: “Bonjour” first, always. Then the apples!"}
+       ]},
+      {other:{fr:"Voilà. Autre chose ?", say:"vwah-LAH. OH-truh SHOHZ", en:"Here you go. Anything else?"},
+       prompt:"No, that’s all — and ask the price.",
+       choices:[
+        {fr:"Non, merci. C’est combien ?", en:"No, thanks. How much is it?", good:true},
+        {fr:"Qu’est-ce que c’est ?", en:"What is that?", note:"You know what they are — apples! 🙂 You want the PRICE: “C’est combien ?”"},
+        {fr:"Où est la gare ?", en:"Where is the station?", note:"A surprise change of topic! 🙂 First pay for the apples: “C’est combien ?”"}
+       ]},
+      {other:{fr:"Deux euros, s’il vous plaît.", say:"duh zuh-ROH", en:"Two euros, please."},
+       prompt:"Hand him the coins and finish warmly.",
+       choices:[
+        {fr:"Voilà. Merci, bonne journée !", en:"Here you go. Thanks, have a nice day!", good:true},
+        {fr:"C’est combien ?", en:"How much is it?", note:"He just told you — deux euros, two! 🙂 Hand it over: “Voilà. Merci !”"},
+        {fr:"Non, merci.", en:"No, thanks.", note:"You do want the apples though! 🙂 Pay with a smile: “Voilà. Merci, bonne journée !”"}
+       ]}
+    ],
+    end:"🍎 You bought something at a French market — numbers, prices, politeness, done. Next stop: an actual café."
+  },
+  practice:[
+    {listen:"cinq", q:"Tap play. Which number did you hear?", opts:["5","2","10"], a:0, why:"“Cinq” (SANK) = five. “Deux” = two, “dix” = ten."},
+    {q:"You want to know the price of a hat. Ask:", opts:["C’est combien ?","Qu’est-ce que c’est ?","Où est… ?"], a:0, why:"“C’est combien ?” = how much is it? Point at anything and ask — it always works."},
+    {q:"What is “sept”?", opts:["7","6","8"], a:0, why:"“Sept” (SET — silent P) = seven. Six = “six” (SEESS), eight = “huit” (WEET)."},
+    {q:"You see a strange food at the market. Ask what it is:", opts:["Qu’est-ce que c’est ?","C’est combien ?","Vous avez… ?"], a:0, why:"“Qu’est-ce que c’est ?” (kess kuh SEH) = what is that? Perfect for pointing at mysteries."},
+    {q:"Ask the hotel desk if they have a map (un plan):", opts:["Vous avez un plan ?","Où est un plan ?","C’est combien un plan ?"], a:0, why:"“Vous avez… ?” = do you have…? The go-to phrase for asking if something exists."}
+  ]
+},
+{
+  id:"cafe", emoji:"☕", title:"Café & restaurant",
+  goal:"Order food and drinks, and ask for the bill — with confidence.",
+  intro:"The moment you’ve been training for: ordering in French. One magic phrase does most of the work: “Je voudrais ___, s’il vous plaît” (I would like ___, please). Learn the frame, then swap in anything you want. That’s how French speakers actually talk — in reusable chunks.",
+  phrases:[
+    {fr:"Je voudrais…", say:"zhuh voo-DREH…", en:"I would like…", reg:"both", tip:"THE polite ordering phrase. “Je voudrais un café.” Swap the ending for anything you want."},
+    {fr:"Un café, s’il vous plaît", say:"uh(n) kah-FAY, seel voo PLEH", en:"A coffee, please", reg:"both", tip:"Watch out: “un café” in France = a small strong espresso. Want milk? “Un café crème” (kah-FAY KREM)."},
+    {fr:"Un thé", say:"uh(n) TAY", en:"A tea", reg:"both", tip:"The H is silent: “tay”."},
+    {fr:"Une carafe d’eau", say:"ewn kah-RAHF DOH", en:"A jug of tap water", reg:"both", tip:"Free water at any French restaurant! Say this or you may get pricey bottled water."},
+    {fr:"Une bière", say:"ewn BYEHR", en:"A beer", reg:"both", tip:"“Une bière, s’il vous plaît” — the full sentence, ready to go."},
+    {fr:"Un verre de vin", say:"uh(n) VEHR duh VA(N)", en:"A glass of wine", reg:"both", tip:"“Vin rouge” (VA(N) ROOZH) = red. “Vin blanc” (VA(N) BLAH(N)) = white."},
+    {fr:"Un croissant", say:"uh(n) krwah-SAH(N)", en:"A croissant", reg:"both", tip:"You met this one at the bakery. Nasal ending — no hard T."},
+    {fr:"La carte, s’il vous plaît", say:"lah KART, seel voo PLEH", en:"The menu, please", reg:"both", tip:"“La carte” = the menu. (“Le menu” means a fixed-price set meal — nice surprise, but different!)"},
+    {fr:"Une table pour deux", say:"ewn TAH-bluh poor DUH", en:"A table for two", reg:"both", tip:"Swap the number: “pour un”, “pour quatre”… your Unit 4 numbers at work."},
+    {fr:"L’addition, s’il vous plaît", say:"lah-dee-SYOH(N), seel voo PLEH", en:"The bill, please", reg:"both", tip:"Essential! French waiters will NOT bring the bill until you ask. It’s politeness, not slow service."},
+    {fr:"C’était très bon !", say:"say-TEH treh BOH(N)", en:"It was very good!", reg:"both", tip:"Say it when paying. Waiters light up when visitors say this."}
+  ],
+  culture:"In France the bill never comes until you ask — bringing it early would feel like kicking you out. Linger as long as you like, then say “L’addition, s’il vous plaît”. Also: tipping is optional (service is included); rounding up or leaving a euro or two says “merci” nicely.",
+  roleplay:{
+    title:"Role-play: the café terrace",
+    scene:"A sunny café terrace in Lyon. The waiter comes over. You want a coffee and a croissant — and later, the bill. This is the big one. Bonne chance !",
+    steps:[
+      {other:{fr:"Bonjour ! Vous désirez ?", say:"boh(n)-ZHOOR ! voo day-zee-RAY", en:"Hello! What would you like?"},
+       prompt:"Greet him and order a coffee.",
+       choices:[
+        {fr:"Bonjour ! Je voudrais un café, s’il vous plaît.", en:"Hello! I’d like a coffee, please.", good:true},
+        {fr:"Un café !", en:"A coffee! (no greeting, no please)", note:"It works, but it lands a bit rude. The winning formula: Bonjour + je voudrais + s’il vous plaît."},
+        {fr:"Bonjour ! L’addition, s’il vous plaît.", en:"Hello! The bill, please.", note:"The bill before ordering? The waiter would love the confidence 🙂 First: “Je voudrais un café…”"}
+       ]},
+      {other:{fr:"Très bien. Et avec ça ?", say:"treh BYA(N). ay ah-vek SAH", en:"Very good. Anything with that?"},
+       prompt:"Add a croissant.",
+       choices:[
+        {fr:"Un croissant, s’il vous plaît.", en:"A croissant, please.", good:true},
+        {fr:"Une carafe de croissant.", en:"A jug of croissant.", note:"A jug of croissant — now THAT would be a photo 🙂 Just: “Un croissant, s’il vous plaît.”"},
+        {fr:"Non !", en:"No!", note:"A bare “Non !” sounds harsh — and you DO want that croissant. “Un croissant, s’il vous plaît !”"}
+       ]},
+      {other:{fr:"Voilà ! Bon appétit !", say:"vwah-LAH ! boh(n) nah-pay-TEE", en:"Here you are! Enjoy!"},
+       prompt:"Your order arrives. Say thanks.",
+       choices:[
+        {fr:"Merci beaucoup !", en:"Thank you very much!", good:true},
+        {fr:"C’est combien ?", en:"How much is it?", note:"Relax — pay at the end! For now just enjoy: “Merci beaucoup !”"},
+        {fr:"Bon appétit !", en:"Enjoy your meal!", note:"Sweet of you, but that’s HIS line — he’s not eating 🙂 Just “Merci beaucoup !”"}
+       ]},
+      {other:{fr:"(Vous avez fini. Le serveur passe.)", say:"", en:"(You’ve finished. The waiter passes by.)"},
+       prompt:"Time to go. Ask for the bill.",
+       choices:[
+        {fr:"L’addition, s’il vous plaît !", en:"The bill, please!", good:true},
+        {fr:"La carte, s’il vous plaît !", en:"The menu, please!", note:"“La carte” = the menu — round two?! 🙂 For the bill: “L’addition”."},
+        {fr:"Au revoir !", en:"Goodbye!", note:"Wait — pay first, THEN the stylish exit 🙂 “L’addition, s’il vous plaît !”"}
+       ]},
+      {other:{fr:"Voilà. Ça fait quatre euros.", say:"vwah-LAH. sah feh KAT-ruh zuh-ROH", en:"Here you go. That’s four euros."},
+       prompt:"Pay, and leave a compliment.",
+       choices:[
+        {fr:"Voilà. C’était très bon, merci !", en:"Here you go. It was very good, thanks!", good:true},
+        {fr:"C’est combien ?", en:"How much is it?", note:"He just said: quatre euros — four! Your numbers are your friends 🙂 Pay and compliment: “C’était très bon !”"},
+        {fr:"Comme ci, comme ça.", en:"So-so.", note:"Honest! But a bit tough on the chef 🙂 The kind classic: “C’était très bon, merci !”"}
+       ]}
+    ],
+    end:"☕ You ordered, ate, paid and complimented — a full café visit in French. This exact script works in every café in France. You’re dangerous now."
+  },
+  practice:[
+    {q:"The polite way to order anything starts with:", opts:["Je voudrais…","Vous désirez…","C’était…"], a:0, why:"“Je voudrais…” = I would like… Add anything + “s’il vous plaît” and you’re ordering like a pro. (“Vous désirez ?” is the WAITER’S line.)"},
+    {q:"You want free water with your meal. Ask for:", opts:["Une carafe d’eau","Un verre de vin","Un café crème"], a:0, why:"“Une carafe d’eau” = a jug of tap water — free by law in French restaurants. The others are wine and milky coffee!"},
+    {listen:"L’addition, s’il vous plaît", q:"Tap play. What is this customer asking for?", opts:["The bill","The menu","A table"], a:0, why:"“L’addition” = the bill. Remember: in France it never comes until you ask."},
+    {q:"“Je voudrais ___ table pour deux.” Which word fits?", opts:["une","un","deux"], a:0, why:"“Table” uses “une” (French nouns are “un” or “une” — just learn them with the word: UNE table, UN café)."},
+    {q:"The food was delicious. Tell the waiter:", opts:["C’était très bon !","Comme ci, comme ça.","Qu’est-ce que c’est ?"], a:0, why:"“C’était très bon !” = it was very good. Small phrase, big smiles."}
+  ]
+},
+{
+  id:"shopping", emoji:"🛍️", title:"Shopping & prices",
+  goal:"Browse politely, ask prices, and buy — or not — with a smile.",
+  intro:"Shops are where your greeting habit really pays off. After this unit you can browse without pressure (“je regarde” is a lifesaver), ask prices, try things, pay, and leave gracefully — even when you buy nothing.",
+  phrases:[
+    {fr:"Ça coûte combien ?", say:"sah koot koh(n)-BYA(N)", en:"How much does it cost?", reg:"both", tip:"A twin of “C’est combien ?” — both work everywhere. Use whichever comes out first!"},
+    {fr:"Je regarde, merci", say:"zhuh ruh-GARD, mehr-SEE", en:"I’m just looking, thanks", reg:"both", tip:"THE lifesaver when a shop assistant approaches. Polite, friendly, and they’ll leave you to browse."},
+    {fr:"Je prends ça", say:"zhuh prah(n) SAH", en:"I’ll take this", reg:"both", tip:"Literally “I take that”. Point and say it — done."},
+    {fr:"Je peux essayer ?", say:"zhuh puh eh-say-YAY", en:"Can I try it (on)?", reg:"both", tip:"For clothes, shoes, sunglasses… point and ask."},
+    {fr:"C’est trop cher", say:"say troh SHEHR", en:"It’s too expensive", reg:"both", tip:"“Trop” = too much. Handy at markets — sometimes it even starts a friendly haggle."},
+    {fr:"C’est parfait", say:"say pahr-FEH", en:"It’s perfect", reg:"both", tip:"When it’s just right. Also a great all-purpose “great!”"},
+    {fr:"Par carte", say:"pahr KART", en:"By card", reg:"both", tip:"“Je peux payer par carte ?” = can I pay by card? Or just say “par carte” when they ask."},
+    {fr:"En espèces", say:"ah(n) neh-SPESS", en:"In cash", reg:"both", tip:"The other way to pay. Hear the liaison? “ah(n)-neh-SPESS”."},
+    {fr:"Un sac, s’il vous plaît", say:"uh(n) SAHK, seel voo PLEH", en:"A bag, please", reg:"both", tip:"Bags usually cost a few cents in France — you’ll be asked if you want one."},
+    {fr:"C’est tout, merci", say:"say TOO, mehr-SEE", en:"That’s all, thanks", reg:"both", tip:"The graceful answer to “anything else?” (“Autre chose ?”)."}
+  ],
+  culture:"Small French shops feel like someone’s home: say “Bonjour” when you walk in and “Au revoir, bonne journée !” when you leave — EVEN if you buy nothing and talk to no one. Silence on the way out reads as rude. Two phrases, and every shopkeeper in France is on your side.",
+  roleplay:{
+    title:"Role-play: the souvenir shop",
+    scene:"A little souvenir shop in Nice. You spot a nice scarf. The shopkeeper looks up as you enter. You know how this starts…",
+    steps:[
+      {other:{fr:"Bonjour ! Je peux vous aider ?", say:"boh(n)-ZHOOR ! zhuh puh voo zeh-DAY", en:"Hello! Can I help you?"},
+       prompt:"Greet her — you want to browse first.",
+       choices:[
+        {fr:"Bonjour ! Je regarde, merci.", en:"Hello! Just looking, thanks.", good:true},
+        {fr:"Je regarde.", en:"Just looking. (no greeting)", note:"Almost! But in a small French shop the “Bonjour” is sacred. Greeting first, browsing second."},
+        {fr:"Bonjour ! Je prends ça !", en:"Hello! I’ll take this!", note:"Fastest shopper in France! 🙂 You want to look around first: “Je regarde, merci.”"}
+       ]},
+      {other:{fr:"(Vous trouvez une belle écharpe.)", say:"", en:"(You find a beautiful scarf.)"},
+       prompt:"Ask the price.",
+       choices:[
+        {fr:"Ça coûte combien ?", en:"How much does it cost?", good:true},
+        {fr:"Qu’est-ce que c’est ?", en:"What is that?", note:"It’s a scarf — you know that! 🙂 You want the PRICE: “Ça coûte combien ?”"},
+        {fr:"Je peux essayer ?", en:"Can I try it on?", note:"Great phrase — but ask the price first so there are no surprises: “Ça coûte combien ?”"}
+       ]},
+      {other:{fr:"Quinze euros.", say:"KA(N)Z uh-ROH", en:"Fifteen euros."},
+       prompt:"Fair price. Take it!",
+       choices:[
+        {fr:"C’est parfait, je prends ça.", en:"Perfect, I’ll take it.", good:true},
+        {fr:"C’est trop cher !", en:"It’s too expensive!", note:"You could haggle… but you actually like the price! When it’s right: “C’est parfait, je prends ça.”"},
+        {fr:"Je regarde, merci.", en:"Just looking, thanks.", note:"You’re past looking — you WANT the scarf 🙂 Say: “Je prends ça !”"}
+       ]},
+      {other:{fr:"Très bon choix ! Vous payez comment ?", say:"treh boh(n) SHWAH ! voo pay-yay koh-MAH(N)", en:"Great choice! How are you paying?"},
+       prompt:"Pay by card.",
+       choices:[
+        {fr:"Par carte, s’il vous plaît.", en:"By card, please.", good:true},
+        {fr:"La carte, s’il vous plaît.", en:"The menu, please.", note:"Careful — “LA carte” is the menu at a restaurant! To pay by card: “PAR carte”. Tiny word, big difference."},
+        {fr:"C’est tout, merci.", en:"That’s all, thanks.", note:"That answers “anything else?” — she asked HOW you’re paying. “Par carte” or “en espèces”!"}
+       ]},
+      {other:{fr:"Voilà ! Merci beaucoup !", say:"vwah-LAH ! mehr-SEE boh-KOO", en:"There you go! Thank you very much!"},
+       prompt:"Leave like a local.",
+       choices:[
+        {fr:"Merci ! Au revoir, bonne journée !", en:"Thanks! Goodbye, have a nice day!", good:true},
+        {fr:"(Partir sans rien dire)", en:"(Leave without a word)", note:"The silent exit — the one thing French shopkeepers never forgive! 🙂 Always: “Au revoir, bonne journée !”"},
+        {fr:"Je regarde, merci !", en:"Just looking, thanks!", note:"The scarf is already in your bag! 🙂 Time for the exit line: “Au revoir, bonne journée !”"}
+       ]}
+    ],
+    end:"🧣 Browsed, asked, bought, paid, and exited like a local. Shopkeepers can tell — and they’ll treat you better for it."
+  },
+  practice:[
+    {q:"A shop assistant approaches and you just want to browse. Say:", opts:["Je regarde, merci","Je prends ça","C’est trop cher"], a:0, why:"“Je regarde, merci” = just looking, thanks. Friendly, and they’ll give you space."},
+    {q:"You decide to buy the thing in your hand. Say:", opts:["Je prends ça","Je peux essayer ?","C’est tout ?"], a:0, why:"“Je prends ça” = I’ll take this. Point, say it, done."},
+    {listen:"C’est trop cher", q:"Tap play. What does this shopper think?", opts:["It’s too expensive","It’s perfect","It’s very good"], a:0, why:"“C’est trop cher” = too expensive. (“Trop” = too much.)"},
+    {q:"The cashier asks “Vous payez comment ?” (How are you paying?). You have a bank card:", opts:["Par carte","La carte","En espèces"], a:0, why:"“Par carte” = by card. Watch out: “la carte” = the menu! “En espèces” = in cash."},
+    {q:"You leave a small shop without buying anything. You should:", opts:["Say “Au revoir, bonne journée !”","Leave quietly","Say “Pardon !”"], a:0, why:"Always say goodbye in small French shops, even when you buy nothing. It’s the local rule — and it feels nice."}
+  ]
+},
+{
+  id:"directions", emoji:"🧭", title:"Asking for directions",
+  goal:"Ask where things are — and understand the answer.",
+  intro:"Getting lost is where speaking beats any app. After this unit you can stop someone politely, ask where something is, and actually understand “left, right, straight ahead”. Warning: “droite” and “tout droit” sound similar but point different ways — we’ll sort that out.",
+  phrases:[
+    {fr:"Excusez-moi, où est… ?", say:"ehk-skew-zay-MWAH, oo EH…", en:"Excuse me, where is…?", reg:"formal", tip:"Your Unit 1 “excusez-moi” + “où est”. Stop anyone politely and ask."},
+    {fr:"Où sont les toilettes ?", say:"oo soh(n) lay twah-LET", en:"Where are the toilets?", reg:"both", tip:"Possibly the most important sentence in this entire app. 🙂"},
+    {fr:"Je cherche…", say:"zhuh SHEHRSH…", en:"I’m looking for…", reg:"both", tip:"“Je cherche la gare.” Another way to ask — great when you can’t remember “où est”."},
+    {fr:"la gare", say:"lah GAR", en:"the train station", reg:"both", tip:"“Où est la gare ?” — a classic traveler sentence."},
+    {fr:"l’hôtel", say:"loh-TEL", en:"the hotel", reg:"both", tip:"The H is silent — “loh-TEL”."},
+    {fr:"le métro", say:"luh may-TROH", en:"the metro / subway", reg:"both", tip:"“Où est le métro ?” works in any French city with one."},
+    {fr:"à gauche", say:"ah GOHSH", en:"(to the) left", reg:"both", tip:"Point left while you say it — it helps it stick."},
+    {fr:"à droite", say:"ah DRWAHT", en:"(to the) right", reg:"both", tip:"Hear the clear T at the end? DRWAHT. That T matters — see the next phrase."},
+    {fr:"tout droit", say:"too DRWAH", en:"straight ahead", reg:"both", tip:"NO T sound at the end! “too DRWAH” = straight. “ah DRWAHT” (with T) = right. Listen for that T!"},
+    {fr:"C’est loin ?", say:"say LWA(N)", en:"Is it far?", reg:"both", tip:"Short and useful. The answer you hope for: “Non, c’est près” (it’s near)."},
+    {fr:"C’est près d’ici ?", say:"say preh dee-SEE", en:"Is it near here?", reg:"both", tip:"The optimistic twin of “C’est loin ?”"},
+    {fr:"là-bas", say:"lah-BAH", en:"over there", reg:"both", tip:"Usually comes with a pointing finger. Follow the finger!"}
+  ],
+  culture:"Start every request to a stranger with “Excusez-moi” — never launch straight into the question (and yes, a “Bonjour” before it is even better). If the answer comes back too fast, don’t panic: next unit gives you the rescue phrases. And watch the hands — French directions come with excellent pointing.",
+  roleplay:{
+    title:"Role-play: finding the metro",
+    scene:"You’re lost in Paris (a rite of passage). You need the metro. A friendly-looking woman is walking toward you. Stop her — politely.",
+    steps:[
+      {other:{fr:"(Une passante s’approche.)", say:"", en:"(A passer-by approaches.)"},
+       prompt:"Stop her politely and ask where the metro is.",
+       choices:[
+        {fr:"Excusez-moi, où est le métro ?", en:"Excuse me, where is the metro?", good:true},
+        {fr:"Le métro !", en:"The metro!", note:"A bit alarming shouted at a stranger! 🙂 Soften it: “Excusez-moi, où est le métro ?”"},
+        {fr:"Salut ! Où est le métro ?", en:"Hi! (casual) Where is the metro?", note:"“Salut” with a stranger is over-friendly. “Excusez-moi” is your polite opener."}
+       ]},
+      {other:{fr:"Le métro ? C’est tout droit, puis à gauche.", say:"luh may-TROH ? say too DRWAH, pwee ah GOHSH", en:"The metro? It’s straight ahead, then left."},
+       prompt:"Check you understood: repeat it back.",
+       choices:[
+        {fr:"Tout droit, puis à gauche ?", en:"Straight ahead, then left?", good:true},
+        {fr:"À droite, puis à gauche ?", en:"Right, then left?", note:"Careful — she said “tout DROIT” (no T sound) = straight ahead, not “à droite” = right! Listen again 👂"},
+        {fr:"Qu’est-ce que c’est ?", en:"What is that?", note:"You know what the metro is 🙂 You want to CONFIRM the way: repeat it back to her."}
+       ]},
+      {other:{fr:"Oui, c’est ça ! C’est là-bas.", say:"wee, say SAH ! say lah-BAH", en:"Yes, that’s it! It’s over there."},
+       prompt:"One more check — is it far?",
+       choices:[
+        {fr:"C’est loin ?", en:"Is it far?", good:true},
+        {fr:"C’est combien ?", en:"How much is it?", note:"She’s giving directions, not selling them! 🙂 You mean: “C’est loin ?” — is it far?"},
+        {fr:"Où sont les toilettes ?", en:"Where are the toilets?", note:"A bold topic change! 🙂 (Useful phrase though.) Stay on track: “C’est loin ?”"}
+       ]},
+      {other:{fr:"Non, non — cinq minutes à pied !", say:"noh(n), noh(n) — sank mee-NEWT ah PYAY", en:"No, no — five minutes on foot!"},
+       prompt:"You’ve got everything. Thank her warmly.",
+       choices:[
+        {fr:"Merci beaucoup ! Bonne journée !", en:"Thank you very much! Have a nice day!", good:true},
+        {fr:"De rien !", en:"You’re welcome!", note:"Flip it around — SHE helped YOU, so you say “merci” and she says “de rien” 🙂"},
+        {fr:"Non, merci.", en:"No, thanks.", note:"Refusing directions you asked for? 🙂 She earned a big “Merci beaucoup !”"}
+       ]}
+    ],
+    end:"🧭 You stopped a stranger, asked, UNDERSTOOD the answer, and double-checked it. That’s advanced tourist magic — and you did it in French."
+  },
+  practice:[
+    {listen:"C’est tout droit", q:"Tap play. Which way should you go?", opts:["Straight ahead","Right","Left"], a:0, why:"“Tout droit” (too DRWAH — no T sound) = straight ahead. “À droite” (with a clear T) = right. That tiny T changes your direction!"},
+    {q:"How do you ask where the toilets are?", opts:["Où sont les toilettes ?","Où est la gare ?","Je cherche l’hôtel"], a:0, why:"“Où sont les toilettes ?” — memorize this one. You will thank yourself."},
+    {q:"“Turn left” — which one is LEFT?", opts:["à gauche","à droite","tout droit"], a:0, why:"“À gauche” (GOHSH) = left. “À droite” = right, “tout droit” = straight ahead."},
+    {q:"Politely stop a stranger to ask something:", opts:["Excusez-moi…","Salut…","Voilà…"], a:0, why:"“Excusez-moi” is the polite opener with strangers. “Salut” is only for friends."},
+    {q:"You want to know if the station is close by. Ask:", opts:["C’est près d’ici ?","C’est parfait ?","C’est tout ?"], a:0, why:"“C’est près d’ici ?” = is it near here? (Or ask the flip side: “C’est loin ?” = is it far?)"}
+  ]
+},
+{
+  id:"unstuck", emoji:"🆘", title:"Getting unstuck",
+  goal:"Rescue any conversation: “I don’t understand”, “slower please”, and more.",
+  intro:"Real talk: people WILL answer you fast, and you WON’T understand everything. That’s normal — even fun, once you can handle it. These rescue phrases keep every conversation alive. They might be the most valuable unit in this whole app. Learn them by heart.",
+  phrases:[
+    {fr:"Je ne comprends pas", say:"zhuh nuh koh(n)-prah(n) PAH", en:"I don’t understand", reg:"both", tip:"Say it with a smile — people immediately slow down and help. It’s a superpower, not a defeat."},
+    {fr:"Pouvez-vous répéter, s’il vous plaît ?", say:"poo-vay-VOO ray-pay-TAY, seel voo PLEH", en:"Can you repeat, please?", reg:"formal", tip:"Most people repeat slower and simpler without being asked twice."},
+    {fr:"Plus lentement, s’il vous plaît", say:"plew lah(n)-tuh-MAH(N), seel voo PLEH", en:"Slower, please", reg:"both", tip:"“Lentement” = slowly. The politest brake pedal in French."},
+    {fr:"Parlez-vous anglais ?", say:"pahr-lay-VOO ah(n)-GLEH", en:"Do you speak English?", reg:"formal", tip:"Your safety net. Pro move: try one French sentence FIRST — then this gets a much warmer answer."},
+    {fr:"Je parle un peu français", say:"zhuh parl uh(n) puh frah(n)-SEH", en:"I speak a little French", reg:"both", tip:"Instantly wins hearts. “Un peu” = a little. (True, and getting less true every day!)"},
+    {fr:"Comment dit-on… ?", say:"koh-mah(n) dee-TOH(N)…", en:"How do you say…?", reg:"both", tip:"“Comment dit-on ‘cheese’ en français ?” Turn any stranger into your French teacher."},
+    {fr:"Je ne sais pas", say:"zhuh nuh seh PAH", en:"I don’t know", reg:"both", tip:"Honest and useful. Often comes with a very French shrug."},
+    {fr:"Pouvez-vous m’aider ?", say:"poo-vay-VOO meh-DAY", en:"Can you help me?", reg:"formal", tip:"For when you’re properly stuck. French people are kinder to lost visitors than their reputation says."},
+    {fr:"Ce n’est pas grave", say:"suh neh pah GRAHV", en:"No worries / it’s fine", reg:"both", tip:"Literally “it’s not serious”. Smooths over any small mishap — yours or theirs."},
+    {fr:"Un moment, s’il vous plaît", say:"uh(n) moh-MAH(N), seel voo PLEH", en:"One moment, please", reg:"both", tip:"Buys you thinking time. Take the moment — you’ve earned it."}
+  ],
+  culture:"The secret every traveler learns: starting in French — even one sentence — then switching to English gets you a completely different (warmer!) reception than starting in English. “Bonjour ! Je parle un peu français… parlez-vous anglais ?” is the golden combo. Your effort IS the magic; nobody expects perfection.",
+  roleplay:{
+    title:"Role-play: plot twist — someone asks YOU",
+    scene:"You’re waiting at a crossing when a man rushes up and asks you something — fast. Last week you would have frozen. Not anymore. Watch what happens.",
+    steps:[
+      {other:{fr:"Pardon, vous savez où se trouve la gare Saint-Jean ?", say:"(said very fast!)", en:"(Sorry, do you know where Saint-Jean station is?)"},
+       prompt:"That was FAST. Be honest.",
+       choices:[
+        {fr:"Pardon, je ne comprends pas.", en:"Sorry, I don’t understand.", good:true},
+        {fr:"Oui !", en:"Yes!", note:"Brave! But you didn’t catch it — and now he’s waiting 🙂 The honest move works better: “Je ne comprends pas.”"},
+        {fr:"Ce n’est pas grave.", en:"No worries.", note:"Kind, but it skips the problem — you didn’t understand him! Say so: “Je ne comprends pas.”"}
+       ]},
+      {other:{fr:"Ah pardon ! Où — est — la — gare ?", say:"oo — eh — lah — GAR", en:"Oh sorry! Where — is — the — station?"},
+       prompt:"Slower now… and wait. You KNOW these words! Ask him to say it once more.",
+       choices:[
+        {fr:"Plus lentement, s’il vous plaît ?", en:"Slower, please?", good:true},
+        {fr:"Parlez-vous anglais ?", en:"Do you speak English?", note:"Fair — but you’re SO close to getting it in French! One more listen: “Plus lentement, s’il vous plaît ?”"},
+        {fr:"Je ne sais pas !", en:"I don’t know!", note:"Hold on — you haven’t fully heard the question yet 🙂 Slow him down first: “Plus lentement… ?”"}
+       ]},
+      {other:{fr:"La gare ? Où est la gare ?", say:"lah GAR ? oo eh lah GAR ?", en:"The station? Where is the station?"},
+       prompt:"“Où est la gare” — you know this! And you passed the station earlier: it’s straight ahead. Answer him!",
+       choices:[
+        {fr:"Ah, la gare ! C’est tout droit !", en:"Oh, the station! It’s straight ahead!", good:true},
+        {fr:"Je ne comprends pas.", en:"I don’t understand.", note:"But you DO now — “où est la gare” is pure Unit 7! You even know the answer. Tell him: “C’est tout droit !”"},
+        {fr:"C’est combien ?", en:"How much is it?", note:"Directions are free! 🙂 He wants the WAY: “C’est tout droit !”"}
+       ]},
+      {other:{fr:"Merci beaucoup ! Vous parlez bien français !", say:"mehr-SEE boh-KOO ! voo pahr-lay bya(n) frah(n)-SEH", en:"Thank you very much! You speak French well!"},
+       prompt:"A compliment! Answer with modest charm.",
+       choices:[
+        {fr:"Merci ! Je parle un peu français.", en:"Thanks! I speak a little French.", good:true},
+        {fr:"Non !", en:"No!", note:"Don’t argue with a compliment! 🙂 The charming answer: “Merci ! Je parle un peu français.”"},
+        {fr:"Plus lentement, s’il vous plaît.", en:"Slower, please.", note:"You understood him fine that time! 🙂 Accept the praise: “Merci ! Je parle un peu français.”"}
+       ]}
+    ],
+    end:"🏆 Did you notice what just happened? A native speaker asked YOU for directions, you rescued the conversation, understood, and HELPED — in French. You’re not studying French anymore. You’re speaking it."
+  },
+  practice:[
+    {q:"Someone speaks way too fast. First, tell them honestly:", opts:["Je ne comprends pas","Je ne sais pas","Ce n’est pas grave"], a:0, why:"“Je ne comprends pas” = I don’t understand. (“Je ne sais pas” = I don’t know — close cousins, different jobs!)"},
+    {q:"You caught half of it. Ask them to say it again:", opts:["Pouvez-vous répéter, s’il vous plaît ?","Comment dit-on… ?","Parlez-vous anglais ?"], a:0, why:"“Pouvez-vous répéter ?” = can you repeat? Most people also slow down automatically."},
+    {listen:"Plus lentement, s’il vous plaît", q:"Tap play. What is this person asking for?", opts:["Speak slower","Speak louder","Speak English"], a:0, why:"“Plus lentement” = more slowly. The politest brake pedal in the language."},
+    {q:"You forgot the French word for “cheese”. Ask a local:", opts:["Comment dit-on “cheese” en français ?","Qu’est-ce que c’est “cheese” ?","Où est “cheese” ?"], a:0, why:"“Comment dit-on… ?” = how do you say…? Instant French lesson from any friendly stranger."},
+    {q:"The golden combo for warm treatment as a visitor:", opts:["One French sentence first, then “Parlez-vous anglais ?”","Start in English right away","Stay silent and point"], a:0, why:"Effort first, safety net second. “Bonjour ! Je parle un peu français… parlez-vous anglais ?” melts even Parisian ice."}
+  ]
+}
+];
+
+/* ========================================================= */
+/* State & storage                                            */
+/* ========================================================= */
+
+const DAY = 24*60*60*1000;
+const STORE_KEY = "parlez-progress-v1";
+let state = load();
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORE_KEY));
+    if(s && typeof s === "object") return Object.assign({done:{}, learned:{}, reviews:0}, s);
+  }catch(e){}
+  return {done:{}, learned:{}, reviews:0};
+}
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+function phraseId(u,p){ return "u"+u+"p"+p; }
+function allPhraseRefs(){
+  const out=[];
+  UNITS.forEach((un,ui)=>un.phrases.forEach((ph,pi)=>out.push({id:phraseId(ui,pi), unit:ui, ph})));
+  return out;
+}
+function learnedCount(){ return Object.keys(state.learned).length; }
+function doneCount(){ return Object.keys(state.done).length; }
+function dueRefs(){
+  const now=Date.now();
+  return allPhraseRefs().filter(r=>state.learned[r.id] && state.learned[r.id].due<=now);
+}
+
+/* ========================================================= */
+/* Speech synthesis (audio) — graceful everywhere             */
+/* ========================================================= */
+
+let frVoice=null, voicesChecked=false, playingBtn=null;
+function pickVoice(){
+  if(!("speechSynthesis" in window)) { voicesChecked=true; return; }
+  const vs = speechSynthesis.getVoices();
+  if(vs.length){ voicesChecked=true; }
+  frVoice = vs.find(v=>/^fr[-_]/i.test(v.lang)) || vs.find(v=>/^fr/i.test(v.lang)) || null;
+}
+if("speechSynthesis" in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = ()=>{ pickVoice(); renderAudioNotice(); };
+}
+function canSpeak(){ return ("speechSynthesis" in window); }
+function speak(text, slow, btn){
+  if(!canSpeak()) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "fr-FR";
+    if(frVoice) u.voice = frVoice;
+    u.rate = slow ? 0.55 : 0.85;
+    u.pitch = 1;
+    if(btn){
+      if(playingBtn) playingBtn.classList.remove("playing");
+      playingBtn = btn; btn.classList.add("playing");
+      u.onend = u.onerror = ()=>{ btn.classList.remove("playing"); if(playingBtn===btn) playingBtn=null; };
+    }
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function audioNoticeHTML(){
+  if(!canSpeak()) return '<div class="notice">🔇 This device has no speech support, so the listen buttons are hidden. No problem — the <b>orange sound spellings</b> tell you exactly how to say everything. Read them out loud!</div>';
+  if(voicesChecked && !frVoice) return '<div class="notice">🔈 No French voice was found on this device, so audio may sound a little English. Trust the <b>orange sound spellings</b> — they always work!</div>';
+  return "";
+}
+function renderAudioNotice(){
+  const el=document.getElementById("audio-notice");
+  if(el) el.outerHTML = '<div id="audio-notice">'+audioNoticeHTML()+'</div>';
+}
+
+/* ========================================================= */
+/* Speech recognition (optional mic practice)                 */
+/* ========================================================= */
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+let recActive=false;
+function norm(s){
+  return s.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[’']/g," ").replace(/[^a-z0-9 ]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function similarity(a,b){
+  a=norm(a); b=norm(b);
+  if(!a.length||!b.length) return 0;
+  const m=a.length, n=b.length;
+  let prev=Array.from({length:n+1},(_,j)=>j), cur=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++){
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    }
+    [prev,cur]=[cur,prev];
+  }
+  return 1 - prev[n]/Math.max(m,n);
+}
+function tryMic(target, feedbackEl, btn){
+  if(!SR || recActive) return;
+  let rec;
+  try{ rec = new SR(); }catch(e){ micFail(feedbackEl); return; }
+  recActive=true;
+  rec.lang="fr-FR"; rec.interimResults=false; rec.maxAlternatives=3;
+  btn.textContent="🎙️ Listening… speak now!";
+  feedbackEl.style.display="none";
+  const done=()=>{ recActive=false; btn.innerHTML="🎤 Say it"; };
+  rec.onresult=(ev)=>{
+    done();
+    let best="", bestSim=0;
+    for(const alt of ev.results[0]){
+      const s=similarity(alt.transcript,target);
+      if(s>=bestSim){ bestSim=s; best=alt.transcript; }
+    }
+    feedbackEl.style.display="block";
+    if(bestSim>=0.72) feedbackEl.innerHTML="🎉 <b>That sounded great!</b> I heard: “"+best+"”. You’re really speaking French!";
+    else if(bestSim>=0.4) feedbackEl.innerHTML="👏 <b>So close!</b> I heard: “"+best+"”. Tap 🔊, listen once more, and try again — you’ve nearly got it.";
+    else feedbackEl.innerHTML="💪 <b>Good try!</b> I heard: “"+(best||"…")+"”. Don’t worry — microphones are picky. Saying it out loud at all is the real win. Listen and give it one more go!";
+  };
+  rec.onerror=()=>{ done(); micFail(feedbackEl); };
+  rec.onend=done;
+  try{ rec.start(); }catch(e){ done(); micFail(feedbackEl); }
+}
+function micFail(feedbackEl){
+  feedbackEl.style.display="block";
+  feedbackEl.innerHTML="🙂 The microphone isn’t available right now — no problem at all! Just say the phrase out loud on your own. That’s what counts.";
+}
+
+/* ========================================================= */
+/* Rendering                                                  */
+/* ========================================================= */
+
+const app = document.getElementById("app");
+const navEl = document.getElementById("nav");
+let route = {view:"home"};
+
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function go(r){ route=r; window.scrollTo(0,0); render(); }
+
+function regBadge(reg){
+  if(reg==="formal") return '<span class="badge formal">polite (vous)</span>';
+  if(reg==="informal") return '<span class="badge informal">casual (tu)</span>';
+  return "";
+}
+function audioRow(fr, extraClass){
+  if(!canSpeak()) return "";
+  return '<div class="audio-row '+(extraClass||"")+'">'+
+    '<button class="audio-btn" data-say="'+esc(fr)+'">🔊 Listen</button>'+
+    '<button class="audio-btn slow" data-say-slow="'+esc(fr)+'">🐢 Slow</button>'+
+    (SR?'<button class="audio-btn mic" data-mic="'+esc(fr)+'">🎤 Say it</button>':"")+
+    '</div><div class="mic-feedback"></div>';
+}
+function phraseCardHTML(ph){
+  return '<div class="phrase-card">'+
+    regBadge(ph.reg)+
+    '<div class="phrase-fr">'+esc(ph.fr)+'</div>'+
+    '<div class="phrase-say">'+esc(ph.say)+'</div>'+
+    '<div class="phrase-en">'+esc(ph.en)+'</div>'+
+    audioRow(ph.fr)+
+    (ph.tip?'<div class="phrase-tip">💡 '+esc(ph.tip)+'</div>':"")+
+  '</div>';
+}
+
+function wireAudio(root){
+  root.querySelectorAll("[data-say]").forEach(b=>b.addEventListener("click",()=>speak(b.dataset.say,false,b)));
+  root.querySelectorAll("[data-say-slow]").forEach(b=>b.addEventListener("click",()=>speak(b.dataset.saySlow,true,b)));
+  root.querySelectorAll("[data-mic]").forEach(b=>b.addEventListener("click",()=>{
+    const card=b.closest(".phrase-card, .flash, .card");
+    const fb=card?card.querySelector(".mic-feedback"):null;
+    if(fb) tryMic(b.dataset.mic, fb, b);
+  }));
+}
+
+/* ---------- nav ---------- */
+function renderNav(){
+  const due=dueRefs().length;
+  const items=[
+    ["home","🏠","Learn"],
+    ["review","🔁","Review"],
+    ["book","📖","Phrasebook"]
+  ];
+  navEl.innerHTML = items.map(([v,ico,label])=>{
+    const active = (route.view===v || (v==="home"&&route.view==="unit")) ? "active":"";
+    const pill = (v==="review"&&due>0)?'<span class="nav-pill">'+due+'</span>':"";
+    return '<button class="'+active+'" data-nav="'+v+'" style="position:relative">'+pill+'<span class="n-ico">'+ico+'</span>'+label+'</button>';
+  }).join("");
+  navEl.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>go({view:b.dataset.nav})));
+}
+
+/* ---------- home ---------- */
+function renderHome(){
+  const total=UNITS.length, done=doneCount(), lc=learnedCount(), due=dueRefs().length;
+  const pct = Math.round(done/total*100);
+  let firstOpen = UNITS.findIndex((u,i)=>!state.done[i]);
+  if(firstOpen<0) firstOpen=null;
+
+  let html = '<div class="topbar"><div class="brand">Parlez<span> !</span></div>'+
+    '<button class="icon-btn" id="sound-guide-btn">🔤 Sound guide</button></div>';
+
+  html += '<div id="audio-notice">'+audioNoticeHTML()+'</div>';
+
+  html += '<div class="card">';
+  if(done===0 && lc===0){
+    html += '<h1>Say your first French words — today. 🇫🇷</h1>'+
+    '<p class="muted" style="margin-top:8px">This is a speaking coach, not a textbook. Short lessons, real phrases, real conversations. You will say everything <b>out loud</b> — that is the whole trick.</p>';
+  } else {
+    html += '<h1>Bonjour ! 👋</h1><p class="muted" style="margin-top:8px">Good to see you again. Keep going — every phrase you say out loud sticks a little deeper.</p>';
+  }
+  html += '<div class="progress-wrap"><div class="bar"><div style="width:'+pct+'%"></div></div></div>'+
+    '<div class="stats-row">'+
+    '<div class="stat"><b>'+done+'/'+total+'</b><span>units done</span></div>'+
+    '<div class="stat"><b>'+lc+'</b><span>phrases learned</span></div>'+
+    '<div class="stat"><b>'+due+'</b><span>ready to review</span></div>'+
+    '</div>';
+  if(due>0) html += '<button class="btn coral" id="go-review">🔁 Review '+due+' phrase'+(due>1?"s":"")+' now</button>';
+  html += '</div>';
+
+  html += UNITS.map((u,i)=>{
+    const isDone=!!state.done[i];
+    const badge = isDone ? '<span class="badge done">✓ done</span>' : (i===firstOpen?'<span class="badge start">start here</span>':"");
+    return '<button class="unit-card'+(isDone?" done":"")+'" data-unit="'+i+'">'+
+      '<div class="unit-emoji">'+u.emoji+'</div>'+
+      '<div class="unit-info"><b>'+(i+1)+". "+esc(u.title)+' '+badge+'</b>'+
+      '<div class="small muted">'+esc(u.goal)+'</div></div>'+
+      '<div class="chev">›</div></button>';
+  }).join("");
+
+  html += '<p class="small muted" style="text-align:center; margin-top:16px">Do the units in order — later ones reuse earlier phrases on purpose. Repetition is how speaking sticks. 💪</p>';
+
+  app.innerHTML=html;
+  document.getElementById("sound-guide-btn").addEventListener("click", showSoundGuide);
+  const gr=document.getElementById("go-review"); if(gr) gr.addEventListener("click",()=>go({view:"review"}));
+  app.querySelectorAll("[data-unit]").forEach(b=>b.addEventListener("click",()=>go({view:"unit", unit:+b.dataset.unit, step:0})));
+}
+
+/* ---------- sound guide modal ---------- */
+function showSoundGuide(){
+  const back=document.createElement("div");
+  back.className="modal-back";
+  back.innerHTML='<div class="modal"><h2>🔤 How to read the sound spellings</h2>'+
+    '<p class="small muted" style="margin-bottom:8px">French spelling and French sound are two different worlds. So under every phrase we give you an <b style="color:var(--coral)">orange sound spelling</b> — just read it like English. The same system is used everywhere in this app.</p>'+
+    SOUND_GUIDE.map(([k,d])=>'<div class="sound-row"><div class="sound-key">'+esc(k)+'</div><div class="small">'+esc(d)+'</div></div>').join("")+
+    '<button class="btn primary" id="close-modal">Got it !</button></div>';
+  document.body.appendChild(back);
+  back.addEventListener("click",e=>{ if(e.target===back) back.remove(); });
+  back.querySelector("#close-modal").addEventListener("click",()=>back.remove());
+}
+
+/* ---------- unit flow ---------- */
+const STEP_NAMES=["Learn the phrases","Role-play","Quick practice","Done"];
+function stepDots(step){
+  return '<div class="step-dots">'+[0,1,2].map(i=>'<div class="'+(i<=step?"on":"")+'"></div>').join("")+'</div>';
+}
+function unitHeader(u, ui, step){
+  return '<div class="step-head"><button class="back-btn" id="back">‹</button>'+
+    '<div><div class="small muted">Unit '+(ui+1)+' · '+esc(STEP_NAMES[Math.min(step,2)])+'</div>'+
+    '<b>'+u.emoji+' '+esc(u.title)+'</b></div></div>'+stepDots(step);
+}
+
+function renderUnit(){
+  const ui=route.unit, u=UNITS[ui], step=route.step||0;
+  if(step===0) return renderPhrases(u,ui);
+  if(step===1) return renderRoleplay(u,ui);
+  if(step===2) return renderPractice(u,ui);
+  return renderUnitDone(u,ui);
+}
+
+function renderPhrases(u,ui){
+  let html = unitHeader(u,ui,0);
+  html += '<div id="audio-notice">'+audioNoticeHTML()+'</div>';
+  html += '<div class="card"><h2>What you’ll be able to say</h2><p class="muted small">'+esc(u.intro)+'</p></div>';
+  html += '<div class="notice">🗣️ <b>The one rule:</b> say every phrase <b>out loud</b>, at least twice. Whisper it if you’re on a bus. Your mouth learns French — your eyes don’t.</div>';
+  html += u.phrases.map(phraseCardHTML).join("");
+  if(u.tuvous){
+    html += '<div class="card"><h2>Two words for “you”</h2><div class="tu-vous">'+
+    '<div class="v"><b>vous</b> = polite you<br>strangers · staff · older people · work</div>'+
+    '<div class="t"><b>tu</b> = casual you<br>friends · family · children</div></div>'+
+    '<p class="small muted" style="margin-top:10px">Not sure? Use <b>vous</b>. It is never wrong to be polite.</p></div>';
+  }
+  html += '<div class="culture"><h3>🇫🇷 Culture tip</h3><div class="small">'+esc(u.culture)+'</div></div>';
+  html += '<button class="btn primary" id="next">I said them out loud → role-play</button>';
+  app.innerHTML=html;
+  wireAudio(app);
+  document.getElementById("back").addEventListener("click",()=>go({view:"home"}));
+  document.getElementById("next").addEventListener("click",()=>{
+    u.phrases.forEach((_,pi)=>{
+      const id=phraseId(ui,pi);
+      if(!state.learned[id]) state.learned[id]={box:0, due:Date.now()};
+    });
+    save(); go({view:"unit", unit:ui, step:1});
+  });
+}
+
+/* ---------- roleplay ---------- */
+let rp=null;
+function renderRoleplay(u,ui){
+  rp={step:0, tries:0};
+  let html = unitHeader(u,ui,1);
+  html += '<div class="card"><h2>'+esc(u.roleplay.title)+'</h2>'+
+    '<div class="scene">🎬 '+esc(u.roleplay.scene)+'</div>'+
+    '<p class="small muted">You play <b>you</b>. Pick what to say — and say your line <b>out loud</b> before tapping it. Wrong picks cost nothing; they’re how you learn.</p></div>';
+  html += '<div class="chat" id="chat"></div><div id="rp-zone"></div>';
+  app.innerHTML=html;
+  document.getElementById("back").addEventListener("click",()=>go({view:"unit", unit:ui, step:0}));
+  rpStep(u,ui);
+}
+function bubbleHTML(who, fr, say, en){
+  return '<div class="bubble '+who+'">'+
+    '<div class="b-fr">'+esc(fr)+'</div>'+
+    (say?'<div class="b-say">'+esc(say)+'</div>':"")+
+    (en?'<div class="b-en">'+esc(en)+'</div>':"")+
+    (canSpeak()&&!fr.startsWith("(")?'<button class="mini-audio" data-say="'+esc(fr)+'">🔊 hear it</button>':"")+
+  '</div>';
+}
+function rpStep(u,ui){
+  const chat=document.getElementById("chat"), zone=document.getElementById("rp-zone");
+  const s=u.roleplay.steps[rp.step];
+  chat.insertAdjacentHTML("beforeend", bubbleHTML("them", s.other.fr, s.other.say, s.other.en));
+  wireAudio(chat);
+  if(canSpeak() && !s.other.fr.startsWith("(")) speak(s.other.fr,false,null);
+
+  zone.innerHTML='<div class="card"><div class="prompt-label">👉 '+esc(s.prompt)+'</div>'+
+    s.choices.map((c,i)=>'<button class="choice" data-c="'+i+'"><span class="c-fr">'+esc(c.fr)+'</span><br><span class="c-en">'+esc(c.en)+'</span></button>').join("")+
+    '<div id="rp-note"></div></div>';
+  zone.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>{
+    const c=s.choices[+btn.dataset.c];
+    if(c.good){
+      chat.insertAdjacentHTML("beforeend", bubbleHTML("you", c.fr, "", c.en));
+      wireAudio(chat);
+      if(canSpeak()) speak(c.fr,false,null);
+      rp.step++;
+      if(rp.step < u.roleplay.steps.length){
+        setTimeout(()=>{ rpStep(u,ui); window.scrollTo(0,document.body.scrollHeight); }, 450);
+        zone.innerHTML="";
+      } else {
+        zone.innerHTML='<div class="card"><div class="feedback yes"><b>Scene complete! 🎉</b>'+esc(u.roleplay.end)+'</div>'+
+          '<button class="btn primary" id="to-practice">On to quick practice →</button></div>';
+        zone.querySelector("#to-practice").addEventListener("click",()=>go({view:"unit", unit:ui, step:2}));
+      }
+      window.scrollTo(0,document.body.scrollHeight);
+    } else {
+      btn.classList.add("nope");
+      setTimeout(()=>btn.classList.remove("nope"),400);
+      document.getElementById("rp-note").innerHTML='<div class="gentle-note">💛 '+esc(c.note)+'</div>';
+    }
+  }));
+}
+
+/* ---------- practice ---------- */
+let pr=null;
+function renderPractice(u,ui){
+  pr={i:0, right:0};
+  prQuestion(u,ui);
+}
+function prQuestion(u,ui){
+  const q=u.practice[pr.i];
+  let html = unitHeader(u,ui,2);
+  html += '<div class="card">'+
+    '<div class="q-count">Question '+(pr.i+1)+' of '+u.practice.length+'</div>'+
+    '<div class="q-text">'+esc(q.q)+'</div>'+
+    (q.listen && canSpeak() ? '<div class="audio-row" style="margin:0 0 14px"><button class="audio-btn" data-say="'+esc(q.listen)+'">🔊 Play</button><button class="audio-btn slow" data-say-slow="'+esc(q.listen)+'">🐢 Slow</button></div>' : "")+
+    (q.listen && !canSpeak() ? '<div class="notice">No audio on this device — here’s the phrase instead: <b>'+esc(q.listen)+'</b></div>' : "")+
+    q.opts.map((o,i)=>'<button class="choice" data-o="'+i+'"><span class="c-fr">'+esc(o)+'</span></button>').join("")+
+    '<div id="q-fb"></div></div>';
+  app.innerHTML=html;
+  wireAudio(app);
+  document.getElementById("back").addEventListener("click",()=>go({view:"unit", unit:ui, step:1}));
+  let answered=false;
+  app.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>{
+    if(answered) return;
+    const pick=+btn.dataset.o, fb=document.getElementById("q-fb");
+    if(pick===q.a){
+      answered=true; pr.right++;
+      btn.classList.add("correct");
+      fb.innerHTML='<div class="feedback yes"><b>'+randomPraise()+'</b>'+esc(q.why)+'</div>'+
+        '<button class="btn primary" id="q-next">'+(pr.i+1<u.practice.length?"Next →":"Finish unit 🎉")+'</button>';
+      if(canSpeak() && /[A-Za-zÀ-ÿ’']/.test(q.opts[q.a]) && q.opts[q.a].length>2 && !/^\d/.test(q.opts[q.a]) && isFrench(q.opts[q.a])) speak(q.opts[q.a],false,null);
+      fb.querySelector("#q-next").addEventListener("click",()=>{
+        pr.i++;
+        if(pr.i<u.practice.length) prQuestion(u,ui);
+        else go({view:"unit", unit:ui, step:3});
+      });
+      fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+    } else {
+      btn.classList.add("nope");
+      setTimeout(()=>btn.classList.remove("nope"),400);
+      fb.innerHTML='<div class="feedback almost"><b>Not quite — but great guess! 💛</b>The answer is <b>'+esc(q.opts[q.a])+'</b>. '+esc(q.why)+'<br><span class="small">Tap it above to lock it in — mistakes are how this works.</span></div>';
+    }
+  }));
+}
+function isFrench(s){ return !/^(the |a |i |you|it|so-so|great|terrible|straight|right|left|speak|say|start|stay|leave|5|7|2|10|6|8)/i.test(s); }
+function randomPraise(){
+  const p=["Oui ! Exactly right! 🎉","Perfect! 🌟","That’s it! 👏","Très bien ! (Very good!) ✨","You got it! 🎯"];
+  return p[Math.floor(Math.random()*p.length)];
+}
+
+function renderUnitDone(u,ui){
+  const firstTime=!state.done[ui];
+  state.done[ui]=true;
+  u.phrases.forEach((_,pi)=>{
+    const id=phraseId(ui,pi);
+    if(!state.learned[id]) state.learned[id]={box:0, due:Date.now()};
+  });
+  save();
+  const nextUi = ui+1<UNITS.length ? ui+1 : null;
+  let html = '<div class="celebrate card">'+
+    '<div class="big">🎉</div>'+
+    '<h1 style="margin-top:8px">Unit complete !</h1>'+
+    '<p class="muted" style="margin-top:8px">'+(firstTime?"You just learned <b>"+u.phrases.length+" real French phrases</b> — and used them in a real conversation. That’s not studying. That’s speaking.":"Great review! Saying them again is exactly how they stick.")+'</p>'+
+    '<p class="small muted" style="margin-top:10px">💡 Your new phrases are now in <b>Review</b>. Come back tomorrow — five minutes of review beats an hour of cramming.</p>'+
+    (nextUi!==null?'<button class="btn coral" id="next-unit">Next: '+UNITS[nextUi].emoji+' '+esc(UNITS[nextUi].title)+' →</button>':'<div class="feedback yes" style="text-align:left; margin-top:14px"><b>You finished every unit! 🏆</b>You can greet, introduce yourself, chat, count, order, shop, navigate, and rescue any conversation — in French. Keep the phrases fresh in Review, and go talk to someone réal. Bonne chance !</div>')+
+    '<button class="btn ghost" id="home-btn">Back to units</button>'+
+    '</div>';
+  app.innerHTML=html;
+  const nb=document.getElementById("next-unit");
+  if(nb) nb.addEventListener("click",()=>go({view:"unit", unit:nextUi, step:0}));
+  document.getElementById("home-btn").addEventListener("click",()=>go({view:"home"}));
+}
+
+/* ---------- review (spaced repetition) ---------- */
+const INTERVALS=[1,3,7,14,30,60]; // days by box after grading "got it"
+let rev=null;
+function renderReview(){
+  const due=dueRefs();
+  if(learnedCount()===0){
+    app.innerHTML='<div class="card" style="text-align:center; padding:34px 20px"><div style="font-size:2.6rem">🌱</div>'+
+    '<h2 style="margin-top:10px">Nothing to review yet</h2>'+
+    '<p class="muted small" style="margin-top:6px">Finish your first unit and your phrases will appear here, timed to come back just before you’d forget them.</p>'+
+    '<button class="btn primary" id="start">Start Unit 1 →</button></div>';
+    app.querySelector("#start").addEventListener("click",()=>go({view:"unit", unit:0, step:0}));
+    return;
+  }
+  let queue=due;
+  let ahead=false;
+  if(!queue.length){
+    const learned=allPhraseRefs().filter(r=>state.learned[r.id]).sort((a,b)=>state.learned[a.id].due-state.learned[b.id].due);
+    queue=learned.slice(0,8); ahead=true;
+  }
+  queue=queue.slice(0,15).sort(()=>Math.random()-0.5);
+  rev={queue, i:0, shown:false, ahead, done:0};
+  if(!due.length){
+    app.innerHTML='<div class="card" style="text-align:center; padding:34px 20px"><div style="font-size:2.6rem">✅</div>'+
+    '<h2 style="margin-top:10px">All caught up !</h2>'+
+    '<p class="muted small" style="margin-top:6px">No phrases are due right now — your memory is fresh. Come back tomorrow, or squeeze in some extra practice anyway.</p>'+
+    '<button class="btn coral" id="extra">💪 Practice ahead anyway</button>'+
+    '<button class="btn ghost" id="home-btn">Back to units</button></div>';
+    app.querySelector("#extra").addEventListener("click",()=>revCard());
+    app.querySelector("#home-btn").addEventListener("click",()=>go({view:"home"}));
+    return;
+  }
+  revCard();
+}
+function revCard(){
+  if(rev.i>=rev.queue.length){
+    state.reviews++; save(); renderNav();
+    app.innerHTML='<div class="celebrate card"><div class="big">🧠✨</div>'+
+      '<h1 style="margin-top:8px">Review done !</h1>'+
+      '<p class="muted" style="margin-top:8px">'+rev.done+' phrase'+(rev.done!==1?"s":"")+' refreshed. Each round like this moves them closer to “I just know it”.</p>'+
+      '<button class="btn primary" id="home-btn">Back to units</button></div>';
+    app.querySelector("#home-btn").addEventListener("click",()=>go({view:"home"}));
+    return;
+  }
+  const r=rev.queue[rev.i], ph=r.ph;
+  let html='<div class="step-head"><button class="back-btn" id="back">‹</button>'+
+    '<div><div class="small muted">Review · '+(rev.i+1)+' of '+rev.queue.length+(rev.ahead?" (extra practice)":"")+'</div><b>🔁 Say it in French</b></div></div>';
+  html+='<div class="flash">'+
+    '<div class="f-en">“'+esc(ph.en)+'”</div>'+
+    '<div class="f-hint">Say it out loud in French — then check.</div>'+
+    '<div id="answer" style="display:none">'+
+      '<div class="f-fr">'+esc(ph.fr)+'</div>'+
+      '<div class="f-say">'+esc(ph.say)+'</div>'+
+      audioRow(ph.fr)+
+    '</div>'+
+    '<button class="btn primary" id="reveal" style="margin-top:18px">Show the answer</button>'+
+  '</div>'+
+  '<div id="grades"></div>';
+  app.innerHTML=html;
+  wireAudio(app);
+  document.getElementById("back").addEventListener("click",()=>go({view:"home"}));
+  document.getElementById("reveal").addEventListener("click",()=>{
+    document.getElementById("answer").style.display="block";
+    document.getElementById("reveal").style.display="none";
+    if(canSpeak()) speak(ph.fr,false,null);
+    document.getElementById("grades").innerHTML='<p class="small muted" style="text-align:center; margin-bottom:8px">How did it go? (Be honest — it only helps you.)</p>'+
+      '<div class="grade-row">'+
+      '<button class="btn ghost" data-g="0">😅 Not yet</button>'+
+      '<button class="btn ghost" data-g="1" style="color:var(--gold)">🙂 Almost</button>'+
+      '<button class="btn green" data-g="2">😄 Got it !</button></div>';
+    document.querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",()=>{
+      const g=+b.dataset.g, L=state.learned[r.id]||{box:0,due:Date.now()};
+      if(g===2){ L.box=Math.min(L.box+1, INTERVALS.length-1); L.due=Date.now()+INTERVALS[L.box]*DAY; }
+      else if(g===1){ L.due=Date.now()+1*DAY; }
+      else { L.box=0; L.due=Date.now()+10*60*1000; rev.queue.push(r); }
+      state.learned[r.id]=L; save();
+      rev.done++; rev.i++;
+      revCard();
+    }));
+  });
+}
+
+/* ---------- phrasebook ---------- */
+function renderBook(filter){
+  filter=(filter||"").toLowerCase();
+  let html='<div class="topbar"><div class="brand">📖 Phrasebook</div>'+
+    '<button class="icon-btn" id="sound-guide-btn">🔤 Sounds</button></div>'+
+    '<p class="small muted" style="margin-bottom:12px">Everything in one place — your cheat-sheet. Green dot = learned. Tap 🔊 to hear any phrase.</p>'+
+    '<input class="search" id="book-search" type="search" placeholder="Search… (e.g. “thank”, “merci”, “bill”)" value="'+esc(filter)+'">';
+  let any=false;
+  UNITS.forEach((u,ui)=>{
+    const rows=u.phrases.map((ph,pi)=>({ph,pi})).filter(({ph})=>
+      !filter || ph.fr.toLowerCase().includes(filter) || ph.en.toLowerCase().includes(filter) || ph.say.toLowerCase().includes(filter));
+    if(!rows.length) return;
+    any=true;
+    html+='<div class="book-unit">'+u.emoji+' '+esc(u.title)+'</div>';
+    html+=rows.map(({ph,pi})=>{
+      const learned=!!state.learned[phraseId(ui,pi)];
+      return '<div class="book-row">'+
+        '<div class="learned-dot'+(learned?"":" no")+'" title="'+(learned?"learned":"not learned yet")+'"></div>'+
+        '<div class="b-main"><b>'+esc(ph.fr)+'</b><span class="say">'+esc(ph.say)+'</span> · <span class="en">'+esc(ph.en)+'</span></div>'+
+        (canSpeak()?'<button class="book-play" data-say="'+esc(ph.fr)+'">🔊</button>':"")+
+        '</div>';
+    }).join("");
+  });
+  if(!any) html+='<div class="card" style="text-align:center"><p class="muted">No matches — try another word, like “please” or “merci”.</p></div>';
+  app.innerHTML=html;
+  wireAudio(app);
+  document.getElementById("sound-guide-btn").addEventListener("click", showSoundGuide);
+  const inp=document.getElementById("book-search");
+  inp.addEventListener("input",()=>{
+    const v=inp.value, pos=inp.selectionStart;
+    renderBook(v);
+    const ni=document.getElementById("book-search");
+    ni.focus(); try{ ni.setSelectionRange(pos,pos); }catch(e){}
+  });
+}
+
+/* ---------- root ---------- */
+function render(){
+  renderNav();
+  if(route.view==="home") renderHome();
+  else if(route.view==="unit") renderUnit();
+  else if(route.view==="review") renderReview();
+  else if(route.view==="book") renderBook();
+}
+render();
+</script>
+</body>
+</html>
